@@ -459,6 +459,51 @@ h2 {
   font-weight: 900;
 }
 
+.catalog-quantity {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.quantity-btn {
+  min-height: 48px;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--primary-dark);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.quantity-btn:hover {
+  background: #e7f3ef;
+}
+
+.catalog-quantity-value {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  min-width: 0;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
+.catalog-quantity-value strong {
+  font-size: 20px;
+}
+
+.catalog-quantity-value small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .stack {
   display: grid;
   gap: 12px;

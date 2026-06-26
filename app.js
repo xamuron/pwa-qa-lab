@@ -1,4 +1,4 @@
-const APP_VERSION = '1.2.1';
+const APP_VERSION = '1.2.2';
 const API_BASE = 'https://dummyjson.com';
 const DB_NAME = 'qa-pwa-lab';
 const DB_VERSION = 1;
@@ -236,19 +236,32 @@ function renderProducts() {
     return;
   }
 
-  elements.productsGrid.innerHTML = products.map((product) => `
-    <article class="product-card">
-      <img src="${product.thumbnail}" alt="${escapeHtml(product.title)}" loading="lazy">
-      <div class="product-body">
-        <h3 class="product-title">${escapeHtml(product.title)}</h3>
-        <div class="meta-row">
-          <span>${escapeHtml(product.category)}</span>
-          <span class="price">${formatMoney(product.price)}</span>
+  elements.productsGrid.innerHTML = products.map((product) => {
+    const cartItem = state.cart.find((item) => item.id === product.id);
+
+    return `
+      <article class="product-card">
+        <img src="${product.thumbnail}" alt="${escapeHtml(product.title)}" loading="lazy">
+        <div class="product-body">
+          <h3 class="product-title">${escapeHtml(product.title)}</h3>
+          <div class="meta-row">
+            <span>${escapeHtml(product.category)}</span>
+            <span class="price">${formatMoney(product.price)}</span>
+          </div>
+          ${cartItem ? `
+            <div class="catalog-quantity" aria-label="Количество товара в корзине">
+              <button class="quantity-btn" data-decrease="${product.id}" aria-label="Уменьшить количество ${escapeHtml(product.title)}">-</button>
+              <span class="catalog-quantity-value">
+                <strong>${cartItem.quantity}</strong>
+                <small>в корзине</small>
+              </span>
+              <button class="quantity-btn" data-increase="${product.id}" aria-label="Увеличить количество ${escapeHtml(product.title)}">+</button>
+            </div>
+          ` : `<button class="primary" data-add-to-cart="${product.id}">В корзину</button>`}
         </div>
-        <button class="primary" data-add-to-cart="${product.id}">В корзину</button>
-      </div>
-    </article>
-  `).join('');
+      </article>
+    `;
+  }).join('');
 }
 
 function renderCart() {
@@ -352,6 +365,7 @@ async function addToCart(productId) {
   }
 
   renderCart();
+  renderProducts();
   updateDiagnostics();
   showToast('Товар добавлен в корзину');
 }
@@ -370,12 +384,14 @@ async function changeQuantity(productId, delta) {
 
   await putOne('cart', item);
   renderCart();
+  renderProducts();
 }
 
 async function removeFromCart(productId) {
   state.cart = state.cart.filter((item) => item.id !== productId);
   await deleteOne('cart', productId);
   renderCart();
+  renderProducts();
   updateDiagnostics();
 }
 
@@ -745,9 +761,18 @@ function openInitialViewFromHash() {
 
 function setupEvents() {
   elements.productsGrid.addEventListener('click', (event) => {
-    const id = Number(event.target.dataset.addToCart);
-    if (id) {
-      addToCart(id);
+    const addId = Number(event.target.dataset.addToCart);
+    const increaseId = Number(event.target.dataset.increase);
+    const decreaseId = Number(event.target.dataset.decrease);
+
+    if (addId) {
+      addToCart(addId);
+    }
+    if (increaseId) {
+      changeQuantity(increaseId, 1);
+    }
+    if (decreaseId) {
+      changeQuantity(decreaseId, -1);
     }
   });
 
