@@ -7,7 +7,7 @@
 Перейдите в папку приложения:
 
 ```bash
-cd /Users/xamuron/Developer/qacademy/pwa-qa-lab
+cd /path/to/pwa-qa-lab
 ```
 
 Запустите локальный сервер:
@@ -137,8 +137,8 @@ adb emu kill
 Запустить AVD с DNS:
 
 ```bash
-/Users/xamuron/Library/Android/sdk/emulator/emulator \
-  -avd Medium_Phone_API_36.1 \
+~/Library/Android/sdk/emulator/emulator \
+  -avd {avd_name} \
   -dns-server 8.8.8.8,1.1.1.1
 ```
 
