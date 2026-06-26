@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0f766e">
+    <title>QA PWA Lab</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Powered by dummyjson.com</p>
+        <button id="homeBtn" class="brand-button" type="button">PWA Lab</button>
+      </div>
+      <div class="status-strip" aria-label="Статусы приложения">
+        <span id="networkStatus" class="status-pill">...</span>
+        <span id="swStatus" class="status-pill muted">SW: checking</span>
+        <span class="status-pill muted">v<span id="appVersion">1.0.0</span></span>
+        <button id="profileBtn" class="profile-button" type="button" aria-label="Открыть аккаунт" title="Аккаунт">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 21a8 8 0 0 0-16 0"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span id="profileInitials">G</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <nav class="tabs" aria-label="Разделы">
+        <button class="tab active" data-view="catalog">Каталог</button>
+        <button class="tab" data-view="cart">Корзина <span id="cartCount">0</span></button>
+        <button class="tab" data-view="orders">Очередь <span id="queueCount">0</span></button>
+        <button class="tab dev-tab" data-view="diagnostics">dev</button>
+      </nav>
+
+      <section id="catalogView" class="view active">
+        <div class="toolbar">
+          <label class="search">
+            <span>Поиск</span>
+            <input id="searchInput" type="search" placeholder="iphone, laptop, fragrance">
+          </label>
+          <button id="refreshProductsBtn" class="primary">Обновить каталог</button>
+        </div>
+        <p id="catalogHint" class="hint">Каталог загружается из DummyJSON и сохраняется в IndexedDB для offline-режима.</p>
+        <div id="productsGrid" class="products-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="cartView" class="view">
+        <div class="section-head">
+          <div>
+            <h2>Корзина</h2>
+            <p class="hint">Корзина хранится локально, поэтому доступна без сети.</p>
+          </div>
+          <button id="createOrderBtn" class="primary">Оформить заказ</button>
+        </div>
+        <div id="cartList" class="stack"></div>
+      </section>
+
+      <section id="ordersView" class="view">
+        <div class="section-head">
+          <div>
+            <h2>Очередь синхронизации</h2>
+            <p class="hint">Offline-заказы попадают сюда и отправляются при восстановлении сети.</p>
+          </div>
+          <button id="syncNowBtn" class="primary">Sync now</button>
+        </div>
+        <div id="ordersList" class="stack"></div>
+      </section>
+
+      <section id="accountView" class="view">
+        <div class="section-head account-head">
+          <div>
+            <h2>Аккаунт</h2>
+            <p class="hint">Корзина доступна гостю, но оформление заказа требует входа.</p>
+          </div>
+          <div class="account-head-side">
+            <button id="logoutBtn" class="danger" hidden>Выйти</button>
+            <div id="accountSummary" class="account-summary compact"></div>
+          </div>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <label>
+            <span>Username</span>
+            <input id="usernameInput" name="username" autocomplete="username" value="emilys" required>
+          </label>
+          <label>
+            <span>Password</span>
+            <span class="password-field">
+              <input id="passwordInput" name="password" type="password" autocomplete="current-password" value="emilyspass" required>
+              <button id="togglePasswordBtn" class="icon-button" type="button" aria-label="Показать пароль" title="Показать пароль">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </span>
+          </label>
+          <button id="loginBtn" class="primary" type="submit">Войти</button>
+          <p id="loginHint" class="hint">Demo credentials: emilys / emilyspass. Логин доступен только с сетью.</p>
+        </form>
+
+        <div class="account-summary notification-settings">
+          <strong>Уведомления</strong>
+          <span class="hint">Разрешение выдается сайту целиком и не зависит от гостевого или авторизованного режима.</span>
+          <div class="notification-status-row">
+            <span>Status</span>
+            <strong id="profileNotificationStatus">...</strong>
+          </div>
+          <div class="actions-panel">
+            <button id="profileRequestNotificationsBtn" class="secondary" type="button">Разрешить уведомления</button>
+            <button id="profileResetNotificationsBtn" class="danger" type="button">Убрать разрешение</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="diagnosticsView" class="view">
+        <div class="section-head">
+          <div>
+            <h2>PWA Diagnostics</h2>
+            <p class="hint">Dev-функции приложения для работы с Service Worker, Notifications и Cache Storage.</p>
+          </div>
+          <button id="checkUpdateBtn" class="secondary">Check update</button>
+        </div>
+
+        <div class="diagnostics-grid">
+          <article class="metric"><span>Network</span><strong id="diagNetwork">...</strong></article>
+          <article class="metric"><span>Service Worker</span><strong id="diagSw">...</strong></article>
+          <article class="metric"><span>Active worker</span><strong id="diagSwActive">...</strong></article>
+          <article class="metric"><span>Waiting worker</span><strong id="diagSwWaiting">...</strong></article>
+          <article class="metric"><span>Installing worker</span><strong id="diagSwInstalling">...</strong></article>
+          <article class="metric"><span>Notifications</span><strong id="diagNotifications">...</strong></article>
+          <article class="metric"><span>Auth</span><strong id="diagAuth">guest</strong></article>
+          <article class="metric"><span>Install</span><strong id="diagInstall">...</strong></article>
+          <article class="metric"><span>Products in IDB</span><strong id="diagProducts">0</strong></article>
+          <article class="metric"><span>Pending queue</span><strong id="diagQueue">0</strong></article>
+          <article class="metric"><span>Cache names</span><strong id="diagCaches">0</strong></article>
+          <article class="metric"><span>Last sync</span><strong id="diagLastSync">never</strong></article>
+        </div>
+
+        <div class="actions-panel">
+          <button id="installBtn" class="primary" hidden>Установить PWA</button>
+          <button id="applyWaitingWorkerBtn" class="secondary" disabled>Apply waiting worker</button>
+          <button id="requestNotificationsBtn" class="secondary">Разрешить уведомления</button>
+          <button id="testNotificationBtn" class="secondary">Тестовое уведомление</button>
+          <button id="clearCacheBtn" class="danger">Очистить Cache Storage</button>
+          <button id="clearIdbBtn" class="danger">Очистить IndexedDB</button>
+        </div>
+      </section>
+    </main>
+
+    <aside id="updatePrompt" class="update-prompt hidden" role="status" aria-live="polite">
+      <div>
+        <strong>Доступна новая версия</strong>
+        <span>Обновите приложение, чтобы применить новый Service Worker.</span>
+      </div>
+      <button id="applyUpdateBtn" class="primary">Обновить</button>
+    </aside>
+
+    <aside id="offlineOrderBanner" class="offline-order-banner hidden" role="status" aria-live="polite">
+      <strong>Заказ сохранен</strong>
+      <span>Отправим ваш заказ как только появится сеть!</span>
+    </aside>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="QA PWA Lab">
+  <rect width="512" height="512" rx="96" fill="#0f766e"/>
+  <path d="M114 150c0-24 20-44 44-44h196c24 0 44 20 44 44v212c0 24-20 44-44 44H158c-24 0-44-20-44-44V150Z" fill="#f8fafc"/>
+  <path d="M158 178h196M158 234h118M158 290h196M158 346h84" stroke="#17211d" stroke-width="28" stroke-linecap="round"/>
+  <circle cx="350" cy="346" r="46" fill="#f59e0b"/>
+  <path d="m328 346 15 15 31-36" fill="none" stroke="#17211d" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
