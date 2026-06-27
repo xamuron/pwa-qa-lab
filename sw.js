@@ -1,4 +1,4 @@
-const APP_VERSION = '1.2.3';
+const APP_VERSION = '1.2.5';
 const APP_CACHE = `qa-pwa-lab-app-${APP_VERSION}`;
 const API_CACHE = `qa-pwa-lab-api-${APP_VERSION}`;
 const IMAGE_CACHE = `qa-pwa-lab-images-${APP_VERSION}`;

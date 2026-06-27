@@ -1,4 +1,4 @@
-const APP_VERSION = '1.2.3';
+const APP_VERSION = '1.2.5';
 const API_BASE = 'https://dummyjson.com';
 const DB_NAME = 'qa-pwa-lab';
 const DB_VERSION = 1;
